@@ -1,0 +1,12 @@
+project:
+  name: go-start-template
+  version: 0.0.1
+
+logger:
+  level: debug # available: debug | info | warn | error
+  format: text # available: text | json
+
+http_server:
+  timeout: 10s
+  idle_timeout: 120s
+  max_shutdown_time: 7s # Should be greater than timeout
