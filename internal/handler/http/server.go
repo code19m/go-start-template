@@ -3,18 +3,26 @@ package http
 import (
 	"context"
 	"go-start-template/internal/config"
+	"go-start-template/internal/domain"
 	"log/slog"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
-type HttpHandler struct {
+type myModelSrv interface {
+	Create(ctx context.Context, params domain.CreateMyModelParams) (int32, error)
+	FindOne(ctx context.Context, id int32) (domain.MyModel, error)
+}
+
+type HttpServer struct {
+	*http.Server
+
 	serverConfig  *config.HttpServer
 	openApiConfig *config.OpenAPI
 	log           *slog.Logger
-	server        *http.Server
 	router        *gin.Engine
+	myModelSrv    myModelSrv
 	addr          string
 }
 
@@ -23,28 +31,28 @@ func New(
 	openApiConfig *config.OpenAPI,
 
 	log *slog.Logger,
-	// services *service.Pack,
-	// clients *client.Pack,
 	appmode string,
 	addr string,
+
+	// Services
+	myModelSrv myModelSrv,
 ) (
-	*HttpHandler, error,
+	*HttpServer, error,
 ) {
 	setEngineMode(appmode)
 
 	router := gin.New()
 
-	srv := &HttpHandler{
+	srv := &HttpServer{
 		serverConfig:  srvConfig,
 		openApiConfig: openApiConfig,
 		log:           log,
 		router:        router,
-		// services: services,
-		// clients:  clients,
-		addr: addr,
+		myModelSrv:    myModelSrv,
+		addr:          addr,
 
 		// Ignore ReadTimeout warning since used http.TimeoutHandler instead
-		server: &http.Server{ //nolint: gosec
+		Server: &http.Server{ //nolint: gosec
 			Handler:     http.TimeoutHandler(router, srvConfig.TimeOut, "Server timeout"),
 			Addr:        addr,
 			IdleTimeout: srvConfig.IdleTimeout,
@@ -59,30 +67,12 @@ func New(
 	return srv, nil
 }
 
-func (srv *HttpHandler) Run() error {
-	return srv.server.ListenAndServe()
-}
-
-func (srv *HttpHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
-	srv.router.ServeHTTP(w, req)
-}
-
-func (srv *HttpHandler) Shutdown(ctx context.Context) error {
-	return srv.server.Shutdown(ctx)
-}
-
 func setEngineMode(mode string) {
-	ginMode := gin.ReleaseMode
-	switch mode {
-	case config.LocalMode:
-		ginMode = gin.DebugMode
-	case config.TestMode:
-		ginMode = gin.TestMode
-	}
-	gin.SetMode(ginMode)
+	// Set gin mode to release mod, so we don't need any default logs from gin
+	gin.SetMode(gin.ReleaseMode)
 }
 
-func (srv *HttpHandler) setupGlobalMiddlewares() {
+func (srv *HttpServer) setupGlobalMiddlewares() {
 	srv.router.Use(
 		accessLoggerMiddleware(srv.log),
 		corsMiddleware(),

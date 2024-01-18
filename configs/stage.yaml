@@ -1,3 +1,7 @@
 openapi:
-  host: hrdev.imv.uz
+  host: go-start-template.stage.com
   port: 443
+
+logger:
+  level: info # available: debug | info | warn | error
+  format: json # available: text | json

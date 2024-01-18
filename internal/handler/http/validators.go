@@ -8,7 +8,7 @@ import (
 	"github.com/go-playground/validator/v10"
 )
 
-func (srv *HttpHandler) registerCustomValidators() {
+func (srv *HttpServer) registerCustomValidators() {
 	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
 		v.RegisterTagNameFunc(getNameByPriority)
 	}

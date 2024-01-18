@@ -9,7 +9,7 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
-func (srv *HttpHandler) setupApi() {
+func (srv *HttpServer) setupApi() {
 	r := srv.router
 	r.GET("/health", checkHealth)
 
@@ -20,11 +20,7 @@ func (srv *HttpHandler) setupApi() {
 
 	// Register your handlers here
 	{
-		baseRoute.GET("/hello", func(ctx *gin.Context) {
-			ctx.JSON(200, gin.H{
-				"message": "Hello World!",
-			})
-		})
+		baseRoute.POST("my-model/", srv.createMyModelHandler)
 	}
 }
 

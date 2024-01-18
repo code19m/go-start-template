@@ -1,7 +1,30 @@
 basePath: /api/v1/
+definitions:
+  http.createMyModelReqBody:
+    properties:
+      age:
+        type: integer
+      name:
+        type: string
+    required:
+    - age
+    - name
+    type: object
 info:
   contact: {}
   description: This document contains the source for the go-start-template API
   title: go-start-template API
-paths: {}
+paths:
+  /my-model:
+    post:
+      parameters:
+      - description: _
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/http.createMyModelReqBody'
+      responses: {}
+      tags:
+      - my-model
 swagger: "2.0"

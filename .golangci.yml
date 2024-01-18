@@ -1,0 +1,25 @@
+linters:
+  disable-all: true
+  enable:
+    - errcheck
+    - gosimple
+    - govet
+    - ineffassign
+    - staticcheck
+    - unused
+    - asasalint
+    - asciicheck
+    - bidichk
+    - bodyclose
+    - durationcheck
+    - errname
+    - execinquery
+    - exhaustive
+    - exportloopref
+    - gosec
+    - nilerr
+    - nilnil
+    - noctx
+    - rowserrcheck
+    - sqlclosecheck
+    - zerologlint
