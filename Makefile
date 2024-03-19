@@ -1,4 +1,4 @@
-# To use all commands in this makefile, you need to install the following tools:
+# To use all commands in this Makefile, you need to install the following tools:
 # - golangci-lint
 # - docker
 # - goose

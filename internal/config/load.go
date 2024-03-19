@@ -36,7 +36,7 @@ func Load() (*Config, error) {
 		cfg.AppMode = ProdMode
 	}
 
-	// Read environment specific config file
+	// Read application mode specific config file
 	modeFilename, ok := cfgFileMapper[cfg.AppMode]
 	if ok {
 		err = cleanenv.ReadConfig(configDir+modeFilename, cfg)

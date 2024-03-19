@@ -55,7 +55,7 @@ func Run(http_addr string) {
 	// More services...
 	logger.Info("Initialized services", "elapsed_time", time.Since(start).String())
 
-	// Initialize httpServer
+	// Initialize http Server
 	start = time.Now()
 	httpSrv, err := httpServer.New(&cfg.HttpServer, &cfg.OpenAPI, logger, cfg.AppMode, http_addr, myModelSrv)
 	if err != nil {
@@ -101,7 +101,7 @@ func Run(http_addr string) {
 	}()
 
 	// Wait for shutdown of all upstream services
-	// Then close all downstream dependencies
+	// Then close all downstream services
 	wg.Wait()
 	pool.Close()
 

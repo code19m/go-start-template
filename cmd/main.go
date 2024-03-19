@@ -1,14 +1,12 @@
 package main
 
 import (
+	"go-start-template/cmd/app"
+	"log"
 
 	// Importing the "automaxprocs" package from Uber's Gojuno enables automatic
 	// tuning of the maximum number of OS threads (GOMAXPROCS) that Go can utilize,
 	// improving performance particularly on containerized environments.
-
-	"go-start-template/cmd/app"
-	"log"
-
 	_ "go.uber.org/automaxprocs"
 
 	"github.com/spf13/cobra"
