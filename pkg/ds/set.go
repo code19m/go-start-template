@@ -1,5 +1,8 @@
 package ds
 
+// Set is a collection of unique elements.
+// It is implemented using a map with the element type as the key and an empty struct as the value.
+// It is not concurrency-safe, so consider wrapping it with a sync.RWMutex if you need to use it concurrently.
 type Set[E comparable] map[E]struct{}
 
 func NewSet[E comparable](items ...E) Set[E] {
