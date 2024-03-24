@@ -1,9 +1,10 @@
-package apperr
+package apperr_test
 
 import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"go-start-template/pkg/apperr"
 	"net/http"
 	"testing"
 
@@ -11,9 +12,11 @@ import (
 )
 
 func TestNew(t *testing.T) {
-	var err error = New(Authorization, "Unauthorized", DefaultAuthorizationCode)
+	t.Parallel()
 
-	appErr, ok := err.(*AppError)
+	var err error = apperr.New(apperr.Authorization, "Unauthorized", apperr.DefaultAuthorizationCode)
+
+	appErr, ok := err.(*apperr.AppError)
 	if !ok {
 		t.Errorf("Expected AppError, got %T", err)
 	}
@@ -22,11 +25,11 @@ func TestNew(t *testing.T) {
 		t.Errorf("Expected message 'Unauthorized', got %s", appErr.Message)
 	}
 
-	if appErr.Code != DefaultAuthorizationCode {
-		t.Errorf("Expected code %d, got %d", DefaultAuthorizationCode, appErr.Code)
+	if appErr.Code != apperr.DefaultAuthorizationCode {
+		t.Errorf("Expected code %d, got %d", apperr.DefaultAuthorizationCode, appErr.Code)
 	}
 
-	if appErr.Type != Authorization {
+	if appErr.Type != apperr.Authorization {
 		t.Errorf("Expected type Authorization, got %s", appErr.Type)
 	}
 
@@ -36,7 +39,9 @@ func TestNew(t *testing.T) {
 }
 
 func TestWithDetail(t *testing.T) {
-	err := New(Validation, "Validation error", DefaultValidationCode)
+	t.Parallel()
+
+	err := apperr.New(apperr.Validation, "Validation error", apperr.DefaultValidationCode)
 	err = err.WithDetail("field", "username")
 
 	if len(err.Details) != 1 {
@@ -49,49 +54,55 @@ func TestWithDetail(t *testing.T) {
 }
 
 func TestHTTPCode(t *testing.T) {
+	t.Parallel()
+
 	tests := []struct {
 		err    error
 		status int
 	}{
-		{New(Authorization, "Unauthorized", DefaultAuthorizationCode), http.StatusUnauthorized},
-		{New(Forbidden, "Forbidden", DefaultForbiddenCode), http.StatusForbidden},
-		{New(Validation, "Validation error", DefaultValidationCode), http.StatusBadRequest},
-		{New(NotFound, "Not found", DefaultNotFoundCode), http.StatusNotFound},
-		{New(Conflict, "Conflict", DefaultConflictCode), http.StatusConflict},
-		{New(Internal, "Internal error", DefaultInternalCode), http.StatusInternalServerError},
+		{apperr.New(apperr.Authorization, "Unauthorized", apperr.DefaultAuthorizationCode), http.StatusUnauthorized},
+		{apperr.New(apperr.Forbidden, "Forbidden", apperr.DefaultForbiddenCode), http.StatusForbidden},
+		{apperr.New(apperr.Validation, "Validation error", apperr.DefaultValidationCode), http.StatusBadRequest},
+		{apperr.New(apperr.NotFound, "Not found", apperr.DefaultNotFoundCode), http.StatusNotFound},
+		{apperr.New(apperr.Conflict, "Conflict", apperr.DefaultConflictCode), http.StatusConflict},
+		{apperr.New(apperr.Internal, "Internal error", apperr.DefaultInternalCode), http.StatusInternalServerError},
 		{errors.New("unknown error"), http.StatusInternalServerError},
 	}
 
 	for _, test := range tests {
-		if HTTPCode(test.err) != test.status {
-			t.Errorf("Expected HTTP status %d for error, got %d", test.status, HTTPCode(test.err))
+		if apperr.HTTPCode(test.err) != test.status {
+			t.Errorf("Expected HTTP status %d for error, got %d", test.status, apperr.HTTPCode(test.err))
 		}
 	}
 }
 
 func TestGRPCCode(t *testing.T) {
+	t.Parallel()
+
 	tests := []struct {
 		err  error
 		code int
 	}{
-		{New(Authorization, "Unauthorized", DefaultAuthorizationCode), int(codes.Unauthenticated)},
-		{New(Forbidden, "Forbidden", DefaultForbiddenCode), int(codes.PermissionDenied)},
-		{New(Validation, "Validation error", DefaultValidationCode), int(codes.InvalidArgument)},
-		{New(NotFound, "Not found", DefaultNotFoundCode), int(codes.NotFound)},
-		{New(Conflict, "Conflict", DefaultConflictCode), int(codes.AlreadyExists)},
-		{New(Internal, "Internal error", DefaultInternalCode), int(codes.Internal)},
+		{apperr.New(apperr.Authorization, "Unauthorized", apperr.DefaultAuthorizationCode), int(codes.Unauthenticated)},
+		{apperr.New(apperr.Forbidden, "Forbidden", apperr.DefaultForbiddenCode), int(codes.PermissionDenied)},
+		{apperr.New(apperr.Validation, "Validation error", apperr.DefaultValidationCode), int(codes.InvalidArgument)},
+		{apperr.New(apperr.NotFound, "Not found", apperr.DefaultNotFoundCode), int(codes.NotFound)},
+		{apperr.New(apperr.Conflict, "Conflict", apperr.DefaultConflictCode), int(codes.AlreadyExists)},
+		{apperr.New(apperr.Internal, "Internal error", apperr.DefaultInternalCode), int(codes.Internal)},
 		{errors.New("unknown error"), int(codes.Internal)},
 	}
 
 	for _, test := range tests {
-		if GRPCCode(test.err) != test.code {
-			t.Errorf("Expected gRPC code %d for error, got %d", test.code, GRPCCode(test.err))
+		if apperr.GRPCCode(test.err) != test.code {
+			t.Errorf("Expected gRPC code %d for error, got %d", test.code, apperr.GRPCCode(test.err))
 		}
 	}
 }
 
 func TestUnwrapIsAs(t *testing.T) {
-	originalErr := New(Validation, "Validation error", DefaultValidationCode)
+	t.Parallel()
+
+	originalErr := apperr.New(apperr.Validation, "Validation error", apperr.DefaultValidationCode)
 	wrappedErr := fmt.Errorf("wrapped error: %w", originalErr)
 
 	// Test Unwrap
@@ -108,7 +119,7 @@ func TestUnwrapIsAs(t *testing.T) {
 	}
 
 	// Test As
-	var target *AppError
+	var target *apperr.AppError
 	if !errors.As(wrappedErr, &target) {
 		t.Errorf("Expected As to return true and set target")
 	}
@@ -119,7 +130,9 @@ func TestUnwrapIsAs(t *testing.T) {
 }
 
 func TestUnwrapIsAsWithDetails(t *testing.T) {
-	originalErr := New(Validation, "Validation error", DefaultValidationCode)
+	t.Parallel()
+
+	originalErr := apperr.New(apperr.Validation, "Validation error", apperr.DefaultValidationCode)
 	detailedErr := originalErr.WithDetail("field", "username")
 
 	wrappedErr := fmt.Errorf("wrapped error: %w", detailedErr)
@@ -139,7 +152,7 @@ func TestUnwrapIsAsWithDetails(t *testing.T) {
 	}
 
 	// Test As
-	var target *AppError
+	var target *apperr.AppError
 	if !errors.As(wrappedErr, &target) {
 		t.Errorf("Expected As to return true and set target")
 	}
@@ -150,8 +163,10 @@ func TestUnwrapIsAsWithDetails(t *testing.T) {
 }
 
 func TestAppError_MarshalJSON(t *testing.T) {
-	errWithoutDetails := New(Validation, "Validation error", DefaultValidationCode)
-	errWithDetails := New(Validation, "Validation error", DefaultValidationCode).WithDetail("field", "username")
+	t.Parallel()
+
+	errWithoutDetails := apperr.New(apperr.Validation, "Validation error", apperr.DefaultValidationCode)
+	errWithDetails := apperr.New(apperr.Validation, "Validation error", apperr.DefaultValidationCode).WithDetail("field", "username")
 
 	expectedJSONWithoutDetails := `{"message":"Validation error","code":3000,"type":"VALIDATION"}`
 	expectedJSONWithDetails := `{"message":"Validation error","code":3000,"type":"VALIDATION","details":{"field":"username"}}`
