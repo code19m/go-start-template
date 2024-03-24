@@ -57,7 +57,7 @@ func Run(http_addr string) {
 
 	// Initialize http Server
 	start = time.Now()
-	httpSrv, err := httpServer.New(&cfg.HttpServer, &cfg.OpenAPI, logger, cfg.AppMode, http_addr, myModelSrv)
+	httpSrv, err := httpServer.New(&cfg.HttpServer, logger, cfg.AppMode, http_addr, myModelSrv)
 	if err != nil {
 		logger.Error("Failed to initialize httpServer", "error", err.Error())
 		os.Exit(1)
