@@ -23,17 +23,17 @@ swag:
 
 .PHONY: devup
 devup:
-	docker-compose -f docker-compose.dev.yaml up -d --build
+	docker-compose -f docker-compose.local.yaml up -d --build
 
 
 .PHONY: devdown
 devdown:
-	docker-compose -f docker-compose.dev.yaml down
+	docker-compose -f docker-compose.local.yaml down
 
 
 .PHONY: devexec
 devexec:
-	docker-compose -f docker-compose.dev.yaml exec -it $(name) bash
+	docker-compose -f docker-compose.local.yaml exec -it $(name) bash
 
 
 .PHONY: migrate-add

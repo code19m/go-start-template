@@ -18,17 +18,15 @@ type myModelSrv interface {
 type HttpServer struct {
 	*http.Server
 
-	serverConfig  *config.HttpServer
-	openApiConfig *config.OpenAPI
-	log           *slog.Logger
-	router        *gin.Engine
-	myModelSrv    myModelSrv
-	addr          string
+	serverConfig *config.HttpServer
+	log          *slog.Logger
+	router       *gin.Engine
+	myModelSrv   myModelSrv
+	addr         string
 }
 
 func New(
 	srvConfig *config.HttpServer,
-	openApiConfig *config.OpenAPI,
 
 	log *slog.Logger,
 	appmode string,
@@ -39,17 +37,16 @@ func New(
 ) (
 	*HttpServer, error,
 ) {
-	setEngineMode(appmode)
+	setEngineMode()
 
 	router := gin.New()
 
 	srv := &HttpServer{
-		serverConfig:  srvConfig,
-		openApiConfig: openApiConfig,
-		log:           log,
-		router:        router,
-		myModelSrv:    myModelSrv,
-		addr:          addr,
+		serverConfig: srvConfig,
+		log:          log,
+		router:       router,
+		myModelSrv:   myModelSrv,
+		addr:         addr,
 
 		// Ignore ReadTimeout warning since used http.TimeoutHandler instead
 		Server: &http.Server{ //nolint: gosec
@@ -62,12 +59,14 @@ func New(
 	srv.router.ContextWithFallback = true
 	srv.setupGlobalMiddlewares()
 	srv.setupApi()
+	srv.setupSwaggerDocs()
+	srv.setupHealthCheck()
 	srv.registerCustomValidators()
 
 	return srv, nil
 }
 
-func setEngineMode(mode string) {
+func setEngineMode() {
 	// Set gin mode to release mod, so we don't need any default logs from gin
 	gin.SetMode(gin.ReleaseMode)
 }

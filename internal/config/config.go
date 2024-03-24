@@ -7,17 +7,9 @@ type Config struct {
 	Project    Project    `yaml:"project"`
 	Logger     Logger     `yaml:"logger"`
 	HttpServer HttpServer `yaml:"http_server"`
-	OpenAPI    OpenAPI    `yaml:"openapi"`
-	Postgres   Postgres
 	Auth       Auth
-}
-
-type Postgres struct {
-	Host     string `env:"POSTGRES_HOST"     validate:"required"`
-	Port     int32  `env:"POSTGRES_PORT"     validate:"required"`
-	Db       string `env:"POSTGRES_DB"       validate:"required"`
-	User     string `env:"POSTGRES_USER"     validate:"required"`
-	Password string `env:"POSTGRES_PASSWORD" validate:"required"`
+	Postgres   Postgres
+	Mongo      Mongo
 }
 
 type Project struct {
@@ -31,6 +23,12 @@ type Logger struct {
 	Format string `yaml:"format" validate:"required,oneof=text json"`
 }
 
+type HttpServer struct {
+	TimeOut         time.Duration `yaml:"timeout"           validate:"required"`
+	IdleTimeout     time.Duration `yaml:"idle_timeout"      validate:"required"`
+	MaxShutdownTime time.Duration `yaml:"max_shutdown_time" validate:"required"`
+}
+
 type Auth struct {
 	Host         string `env:"AUTH_HOST"          validate:"required"`
 	Port         int32  `env:"AUTH_PORT"          validate:"required"`
@@ -39,13 +37,18 @@ type Auth struct {
 	UseTLS       bool   `env:"AUTH_USE_TLS"`
 }
 
-type HttpServer struct {
-	TimeOut         time.Duration `yaml:"timeout"           validate:"required"`
-	IdleTimeout     time.Duration `yaml:"idle_timeout"      validate:"required"`
-	MaxShutdownTime time.Duration `yaml:"max_shutdown_time" validate:"required"`
+type Postgres struct {
+	Host     string `env:"POSTGRES_HOST"     validate:"required"`
+	Port     int32  `env:"POSTGRES_PORT"     validate:"required"`
+	Db       string `env:"POSTGRES_DB"       validate:"required"`
+	User     string `env:"POSTGRES_USER"     validate:"required"`
+	Password string `env:"POSTGRES_PASSWORD" validate:"required"`
 }
 
-type OpenAPI struct {
-	Host string `yaml:"host" validate:"required"`
-	Port int32  `yaml:"port" validate:"required"`
+type Mongo struct {
+	Host     string `env:"MONGO_HOST"     validate:"required"`
+	Port     int32  `env:"MONGO_PORT"     validate:"required"`
+	Db       string `env:"MONGO_DB"       validate:"required"`
+	User     string `env:"MONGO_USER"     validate:"required"`
+	Password string `env:"MONGO_PASSWORD" validate:"required"`
 }
