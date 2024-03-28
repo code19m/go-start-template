@@ -12,6 +12,7 @@ require (
 	github.com/romnn/testcontainers v0.2.2
 	github.com/rs/zerolog v1.30.0
 	github.com/samber/slog-zerolog/v2 v2.2.0
+	github.com/segmentio/kafka-go v0.4.47
 	github.com/spf13/cobra v1.8.0
 	github.com/stretchr/testify v1.8.3
 	github.com/swaggo/files v1.0.1
@@ -81,6 +82,7 @@ require (
 	github.com/opencontainers/image-spec v1.1.0-rc2 // indirect
 	github.com/opencontainers/runc v1.1.4 // indirect
 	github.com/pelletier/go-toml/v2 v2.0.8 // indirect
+	github.com/pierrec/lz4/v4 v4.1.17 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/rogpeppe/go-internal v1.12.0 // indirect
 	github.com/samber/lo v1.38.1 // indirect
