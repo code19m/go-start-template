@@ -3,10 +3,10 @@ package postgres
 import (
 	"context"
 	"go-start-template/internal/domain"
+	"go-start-template/pkg/errx"
 	"log/slog"
 
 	"github.com/jackc/pgx/v5/pgxpool"
-	"github.com/pkg/errors"
 )
 
 func NewMyModelStore(log *slog.Logger, pool *pgxpool.Pool) *myModelStore {
@@ -36,7 +36,7 @@ func (store *myModelStore) Create(ctx context.Context, params domain.CreateMyMod
 	err := row.Scan(&id)
 
 	if err != nil {
-		return 0, errors.WithStack(err)
+		return 0, errx.Wrap(err)
 	}
 
 	return id, nil
@@ -57,7 +57,7 @@ func (store *myModelStore) FindOne(ctx context.Context, id int32) (domain.MyMode
 	err := row.Scan(&myModel)
 
 	if err != nil {
-		return myModel, errors.WithStack(err)
+		return myModel, errx.Wrap(err)
 	}
 
 	return myModel, nil

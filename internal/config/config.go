@@ -7,9 +7,9 @@ type Config struct {
 	Project    Project    `yaml:"project"`
 	Logger     Logger     `yaml:"logger"`
 	HttpServer HttpServer `yaml:"http_server"`
-	Auth       Auth
-	Postgres   Postgres
-	Mongo      Mongo
+	// Auth       Auth
+	Postgres Postgres
+	// Mongo      Mongo
 }
 
 type Project struct {

@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"go-start-template/internal/domain"
+	"go-start-template/pkg/errx"
 	"log/slog"
 )
 
@@ -27,11 +28,11 @@ func (srv *myModelSrv) Create(ctx context.Context, params domain.CreateMyModelPa
 	// Some other business logic
 
 	id, err := srv.repo.Create(ctx, params)
-	return id, err
+	return id, errx.Wrap(err)
 }
 
 func (srv *myModelSrv) FindOne(ctx context.Context, id int32) (domain.MyModel, error) {
 	// Some other business logic
-
-	return srv.repo.FindOne(ctx, id)
+	m, err := srv.repo.FindOne(ctx, id)
+	return m, errx.Wrap(err)
 }

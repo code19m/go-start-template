@@ -1,0 +1,5 @@
+1. Add logger to subscriber and log the errors
+2. Implement built-in subscriber interceptors (retry, timeout, notify, recovery, logger)
+3. Write tests for subscriber interceptors
+3. Add basic publisher
+4. Write tests for publisher

@@ -2,6 +2,7 @@ package http
 
 import (
 	"go-start-template/internal/domain"
+	"go-start-template/pkg/errx/errto"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -18,8 +19,9 @@ type createMyModelReqBody struct {
 func (h *HttpServer) createMyModelHandler(c *gin.Context) {
 	var reqBody createMyModelReqBody
 
-	err := c.ShouldBindJSON(&reqBody)
-	if handleBindErr(c, err) {
+	err := bindAndValidate(c, &reqBody)
+	if err != nil {
+		errto.HTTP(c.Writer, err)
 		return
 	}
 
@@ -27,7 +29,8 @@ func (h *HttpServer) createMyModelHandler(c *gin.Context) {
 		Name: reqBody.Name,
 		Age:  reqBody.Age,
 	})
-	if handleAppErr(c, err) {
+	if err != nil {
+		errto.HTTP(c.Writer, err)
 		return
 	}
 

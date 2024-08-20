@@ -71,6 +71,7 @@ func Run(http_addr string) {
 			os.Exit(1)
 		}
 	}()
+	logger.Info("Started http server", "addr", http_addr)
 
 	// TODO: Init kafka consumer
 
